@@ -1,0 +1,259 @@
+data.aws_caller_identity.current: Reading...
+aws_iam_openid_connect_provider.github[0]: Refreshing state... [id=arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com]
+aws_kms_key.ecr: Refreshing state... [id=<kms-key-id>]
+data.aws_caller_identity.current: Read complete after 0s [id=123456789012]
+aws_kms_alias.ecr: Refreshing state... [id=alias/lsm-rust-ecr]
+aws_ecr_repository.this: Refreshing state... [id=lsm-rust]
+data.aws_iam_policy_document.assume[0]: Reading...
+data.aws_iam_policy_document.assume[0]: Read complete after 0s [id=2747077835]
+aws_iam_role.push[0]: Refreshing state... [id=lsm-rust-ecr-push]
+aws_ecr_lifecycle_policy.this: Refreshing state... [id=lsm-rust]
+data.aws_iam_policy_document.push[0]: Reading...
+data.aws_iam_policy_document.push[0]: Read complete after 0s [id=1050717360]
+aws_iam_role_policy.push[0]: Refreshing state... [id=lsm-rust-ecr-push:ecr-push]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  - destroy
+
+Terraform will perform the following actions:
+
+  # aws_ecr_lifecycle_policy.this will be destroyed
+  - resource "aws_ecr_lifecycle_policy" "this" {
+      - id          = "lsm-rust" -> null
+      - policy      = jsonencode(
+            {
+              - rules = [
+                  - {
+                      - action       = {
+                          - type = "expire"
+                        }
+                      - description  = "Expire untagged images"
+                      - rulePriority = 1
+                      - selection    = {
+                          - countNumber = 7
+                          - countType   = "sinceImagePushed"
+                          - countUnit   = "days"
+                          - tagStatus   = "untagged"
+                        }
+                    },
+                ]
+            }
+        ) -> null
+      - registry_id = "123456789012" -> null
+      - repository  = "lsm-rust" -> null
+    }
+
+  # aws_ecr_repository.this will be destroyed
+  - resource "aws_ecr_repository" "this" {
+      - arn                  = "arn:aws:ecr:eu-west-1:123456789012:repository/lsm-rust" -> null
+      - id                   = "lsm-rust" -> null
+      - image_tag_mutability = "IMMUTABLE" -> null
+      - name                 = "lsm-rust" -> null
+      - registry_id          = "123456789012" -> null
+      - repository_url       = "123456789012.dkr.ecr.eu-west-1.amazonaws.com/lsm-rust" -> null
+      - tags                 = {} -> null
+      - tags_all             = {
+          - "app"        = "lsm-rust"
+          - "managed-by" = "terraform"
+        } -> null
+
+      - encryption_configuration {
+          - encryption_type = "KMS" -> null
+          - kms_key         = "arn:aws:kms:eu-west-1:123456789012:key/<kms-key-id>" -> null
+        }
+
+      - image_scanning_configuration {
+          - scan_on_push = true -> null
+        }
+    }
+
+  # aws_iam_openid_connect_provider.github[0] will be destroyed
+  - resource "aws_iam_openid_connect_provider" "github" {
+      - arn             = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com" -> null
+      - client_id_list  = [
+          - "sts.amazonaws.com",
+        ] -> null
+      - id              = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com" -> null
+      - tags            = {} -> null
+      - tags_all        = {
+          - "app"        = "lsm-rust"
+          - "managed-by" = "terraform"
+        } -> null
+      - thumbprint_list = [
+          - "ab9d0263244dd0326eb67015705a667e79cfe998",
+        ] -> null
+      - url             = "token.actions.githubusercontent.com" -> null
+    }
+
+  # aws_iam_role.push[0] will be destroyed
+  - resource "aws_iam_role" "push" {
+      - arn                   = "arn:aws:iam::123456789012:role/lsm-rust-ecr-push" -> null
+      - assume_role_policy    = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action    = "sts:AssumeRoleWithWebIdentity"
+                      - Condition = {
+                          - StringEquals = {
+                              - "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+                            }
+                          - StringLike   = {
+                              - "token.actions.githubusercontent.com:sub" = "repo:zvdy/lsm-rust:ref:refs/tags/v*"
+                            }
+                        }
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - Federated = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"
+                        }
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - create_date           = "2026-10-10T17:57:36Z" -> null
+      - force_detach_policies = false -> null
+      - id                    = "lsm-rust-ecr-push" -> null
+      - managed_policy_arns   = [] -> null
+      - max_session_duration  = 3600 -> null
+      - name                  = "lsm-rust-ecr-push" -> null
+      - path                  = "/" -> null
+      - tags                  = {} -> null
+      - tags_all              = {
+          - "app"        = "lsm-rust"
+          - "managed-by" = "terraform"
+        } -> null
+      - unique_id             = "AROA2PYGKCB4YOO6UJNOP" -> null
+        # (3 unchanged attributes hidden)
+
+      - inline_policy {
+          - name   = "ecr-push" -> null
+          - policy = jsonencode(
+                {
+                  - Statement = [
+                      - {
+                          - Action   = "ecr:GetAuthorizationToken"
+                          - Effect   = "Allow"
+                          - Resource = "*"
+                        },
+                      - {
+                          - Action   = [
+                              - "ecr:UploadLayerPart",
+                              - "ecr:PutImage",
+                              - "ecr:InitiateLayerUpload",
+                              - "ecr:CompleteLayerUpload",
+                              - "ecr:BatchGetImage",
+                              - "ecr:BatchCheckLayerAvailability",
+                            ]
+                          - Effect   = "Allow"
+                          - Resource = "arn:aws:ecr:eu-west-1:123456789012:repository/lsm-rust"
+                        },
+                    ]
+                  - Version   = "2012-10-17"
+                }
+            ) -> null
+        }
+    }
+
+  # aws_iam_role_policy.push[0] will be destroyed
+  - resource "aws_iam_role_policy" "push" {
+      - id          = "lsm-rust-ecr-push:ecr-push" -> null
+      - name        = "ecr-push" -> null
+      - policy      = jsonencode(
+            {
+              - Statement = [
+                  - {
+                      - Action   = "ecr:GetAuthorizationToken"
+                      - Effect   = "Allow"
+                      - Resource = "*"
+                    },
+                  - {
+                      - Action   = [
+                          - "ecr:UploadLayerPart",
+                          - "ecr:PutImage",
+                          - "ecr:InitiateLayerUpload",
+                          - "ecr:CompleteLayerUpload",
+                          - "ecr:BatchGetImage",
+                          - "ecr:BatchCheckLayerAvailability",
+                        ]
+                      - Effect   = "Allow"
+                      - Resource = "arn:aws:ecr:eu-west-1:123456789012:repository/lsm-rust"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - role        = "lsm-rust-ecr-push" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_kms_alias.ecr will be destroyed
+  - resource "aws_kms_alias" "ecr" {
+      - arn            = "arn:aws:kms:eu-west-1:123456789012:alias/lsm-rust-ecr" -> null
+      - id             = "alias/lsm-rust-ecr" -> null
+      - name           = "alias/lsm-rust-ecr" -> null
+      - target_key_arn = "arn:aws:kms:eu-west-1:123456789012:key/<kms-key-id>" -> null
+      - target_key_id  = "<kms-key-id>" -> null
+        # (1 unchanged attribute hidden)
+    }
+
+  # aws_kms_key.ecr will be destroyed
+  - resource "aws_kms_key" "ecr" {
+      - arn                                = "arn:aws:kms:eu-west-1:123456789012:key/<kms-key-id>" -> null
+      - bypass_policy_lockout_safety_check = false -> null
+      - customer_master_key_spec           = "SYMMETRIC_DEFAULT" -> null
+      - deletion_window_in_days            = 7 -> null
+      - description                        = "ECR encryption for lsm-rust" -> null
+      - enable_key_rotation                = true -> null
+      - id                                 = "<kms-key-id>" -> null
+      - is_enabled                         = true -> null
+      - key_id                             = "<kms-key-id>" -> null
+      - key_usage                          = "ENCRYPT_DECRYPT" -> null
+      - multi_region                       = false -> null
+      - policy                             = jsonencode(
+            {
+              - Id        = "key-default-1"
+              - Statement = [
+                  - {
+                      - Action    = "kms:*"
+                      - Effect    = "Allow"
+                      - Principal = {
+                          - AWS = "arn:aws:iam::123456789012:root"
+                        }
+                      - Resource  = "*"
+                      - Sid       = "Enable IAM User Permissions"
+                    },
+                ]
+              - Version   = "2012-10-17"
+            }
+        ) -> null
+      - rotation_period_in_days            = 365 -> null
+      - tags                               = {} -> null
+      - tags_all                           = {
+          - "app"        = "lsm-rust"
+          - "managed-by" = "terraform"
+        } -> null
+        # (2 unchanged attributes hidden)
+    }
+
+Plan: 0 to add, 0 to change, 7 to destroy.
+
+Changes to Outputs:
+  - push_role_arn  = "arn:aws:iam::123456789012:role/lsm-rust-ecr-push" -> null
+  - repository_url = "123456789012.dkr.ecr.eu-west-1.amazonaws.com/lsm-rust" -> null
+aws_kms_alias.ecr: Destroying... [id=alias/lsm-rust-ecr]
+aws_iam_role_policy.push[0]: Destroying... [id=lsm-rust-ecr-push:ecr-push]
+aws_ecr_lifecycle_policy.this: Destroying... [id=lsm-rust]
+aws_kms_alias.ecr: Destruction complete after 0s
+aws_ecr_lifecycle_policy.this: Destruction complete after 0s
+aws_iam_role_policy.push[0]: Destruction complete after 0s
+aws_ecr_repository.this: Destroying... [id=lsm-rust]
+aws_iam_role.push[0]: Destroying... [id=lsm-rust-ecr-push]
+aws_ecr_repository.this: Destruction complete after 0s
+aws_kms_key.ecr: Destroying... [id=<kms-key-id>]
+aws_kms_key.ecr: Destruction complete after 1s
+aws_iam_role.push[0]: Destruction complete after 1s
+aws_iam_openid_connect_provider.github[0]: Destroying... [id=arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com]
+aws_iam_openid_connect_provider.github[0]: Destruction complete after 0s
+
+Destroy complete! Resources: 7 destroyed.

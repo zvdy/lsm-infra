@@ -12,7 +12,7 @@ data "aws_caller_identity" "current" {}
 resource "aws_kms_key" "ecr" {
   description             = "ECR encryption for ${var.repository_name}"
   enable_key_rotation     = true
-  deletion_window_in_days = 30
+  deletion_window_in_days = var.kms_deletion_window_days
 }
 
 resource "aws_kms_alias" "ecr" {

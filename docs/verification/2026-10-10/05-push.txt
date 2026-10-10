@@ -1,0 +1,28 @@
+## docker login + push
+Login Succeeded
+5450aec6b60d: Pushed
+79810919e2e4: Pushed
+0.1.0-verify: digest: sha256:90e594d08cc6942ec4808349f0a66efdcec06fb490987dd45d6b6eca2f0b64b3 size: 856
+## immutability: re-push same tag with different content must fail
+af820adcc158: Pushed
+error from registry: The image tag '0.1.0-verify' already exists in the 'lsm-rust' repository and cannot be overwritten because the tag is immutable.
+## image listing
+[
+    {
+        "tags": null,
+        "sizeMB": 11366504,
+        "scan": null
+    },
+    {
+        "tags": null,
+        "sizeMB": 1825,
+        "scan": null
+    },
+    {
+        "tags": [
+            "0.1.0-verify"
+        ],
+        "sizeMB": 11366504,
+        "scan": null
+    }
+]

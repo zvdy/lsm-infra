@@ -1,0 +1,4 @@
+## scan result
+status: 
+
+aws: [ERROR]: An error occurred (ScanNotFoundException) when calling the DescribeImageScanFindings operation: Image scan does not exist for the image with '{imageDigest:'null', imageTag:'0.1.0-verify'}' in the repository with name 'lsm-rust' in the registry with id '123456789012'

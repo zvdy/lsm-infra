@@ -38,3 +38,14 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "kms_deletion_window_days" {
+  description = "Waiting period before the KMS key is deleted after destroy (7-30)."
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.kms_deletion_window_days >= 7 && var.kms_deletion_window_days <= 30
+    error_message = "kms_deletion_window_days must be between 7 and 30."
+  }
+}
