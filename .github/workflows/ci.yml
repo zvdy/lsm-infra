@@ -1,0 +1,19 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+      - name: Validate
+        working-directory: aws-ecr
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
