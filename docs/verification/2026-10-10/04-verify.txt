@@ -1,0 +1,39 @@
+## ECR repository
+{
+    "name": "lsm-rust",
+    "tagMutability": "IMMUTABLE",
+    "scanOnPush": true,
+    "encryption": "KMS"
+}
+## Lifecycle policy
+{"rules":[{"rulePriority":1,"description":"Expire untagged images","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":7},"action":{"type":"expire"}}]}
+## KMS key
+{
+    "state": "Enabled",
+    "manager": "CUSTOMER",
+    "usage": "ENCRYPT_DECRYPT"
+}
+true
+## OIDC provider
+arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com
+## Push role trust policy
+{
+    "StringEquals": {
+        "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+    },
+    "StringLike": {
+        "token.actions.githubusercontent.com:sub": "repo:zvdy/lsm-rust:ref:refs/tags/v*"
+    }
+}
+## Push role permissions
+[
+    "ecr:GetAuthorizationToken",
+    [
+        "ecr:UploadLayerPart",
+        "ecr:PutImage",
+        "ecr:InitiateLayerUpload",
+        "ecr:CompleteLayerUpload",
+        "ecr:BatchGetImage",
+        "ecr:BatchCheckLayerAvailability"
+    ]
+]

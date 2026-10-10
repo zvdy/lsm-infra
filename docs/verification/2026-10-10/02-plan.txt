@@ -1,0 +1,214 @@
+data.aws_caller_identity.current: Reading...
+data.aws_caller_identity.current: Read complete after 1s [id=123456789012]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.aws_iam_policy_document.assume[0] will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "assume" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions = [
+              + "sts:AssumeRoleWithWebIdentity",
+            ]
+
+          + condition {
+              + test     = "StringEquals"
+              + values   = [
+                  + "sts.amazonaws.com",
+                ]
+              + variable = "token.actions.githubusercontent.com:aud"
+            }
+          + condition {
+              + test     = "StringLike"
+              + values   = [
+                  + "repo:zvdy/lsm-rust:ref:refs/tags/v*",
+                ]
+              + variable = "token.actions.githubusercontent.com:sub"
+            }
+
+          + principals {
+              + identifiers = [
+                  + (known after apply),
+                ]
+              + type        = "Federated"
+            }
+        }
+    }
+
+  # data.aws_iam_policy_document.push[0] will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "push" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "ecr:GetAuthorizationToken",
+            ]
+          + resources = [
+              + "*",
+            ]
+        }
+      + statement {
+          + actions   = [
+              + "ecr:BatchCheckLayerAvailability",
+              + "ecr:BatchGetImage",
+              + "ecr:CompleteLayerUpload",
+              + "ecr:InitiateLayerUpload",
+              + "ecr:PutImage",
+              + "ecr:UploadLayerPart",
+            ]
+          + resources = [
+              + (known after apply),
+            ]
+        }
+    }
+
+  # aws_ecr_lifecycle_policy.this will be created
+  + resource "aws_ecr_lifecycle_policy" "this" {
+      + id          = (known after apply)
+      + policy      = jsonencode(
+            {
+              + rules = [
+                  + {
+                      + action       = {
+                          + type = "expire"
+                        }
+                      + description  = "Expire untagged images"
+                      + rulePriority = 1
+                      + selection    = {
+                          + countNumber = 7
+                          + countType   = "sinceImagePushed"
+                          + countUnit   = "days"
+                          + tagStatus   = "untagged"
+                        }
+                    },
+                ]
+            }
+        )
+      + registry_id = (known after apply)
+      + repository  = "lsm-rust"
+    }
+
+  # aws_ecr_repository.this will be created
+  + resource "aws_ecr_repository" "this" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "lsm-rust"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags_all             = {
+          + "app"        = "lsm-rust"
+          + "managed-by" = "terraform"
+        }
+
+      + encryption_configuration {
+          + encryption_type = "KMS"
+          + kms_key         = (known after apply)
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_iam_openid_connect_provider.github[0] will be created
+  + resource "aws_iam_openid_connect_provider" "github" {
+      + arn             = (known after apply)
+      + client_id_list  = [
+          + "sts.amazonaws.com",
+        ]
+      + id              = (known after apply)
+      + tags_all        = {
+          + "app"        = "lsm-rust"
+          + "managed-by" = "terraform"
+        }
+      + thumbprint_list = (known after apply)
+      + url             = "https://token.actions.githubusercontent.com"
+    }
+
+  # aws_iam_role.push[0] will be created
+  + resource "aws_iam_role" "push" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = (known after apply)
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "lsm-rust-ecr-push"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "app"        = "lsm-rust"
+          + "managed-by" = "terraform"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy.push[0] will be created
+  + resource "aws_iam_role_policy" "push" {
+      + id          = (known after apply)
+      + name        = "ecr-push"
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_kms_alias.ecr will be created
+  + resource "aws_kms_alias" "ecr" {
+      + arn            = (known after apply)
+      + id             = (known after apply)
+      + name           = "alias/lsm-rust-ecr"
+      + name_prefix    = (known after apply)
+      + target_key_arn = (known after apply)
+      + target_key_id  = (known after apply)
+    }
+
+  # aws_kms_key.ecr will be created
+  + resource "aws_kms_key" "ecr" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + deletion_window_in_days            = 7
+      + description                        = "ECR encryption for lsm-rust"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = (known after apply)
+      + rotation_period_in_days            = (known after apply)
+      + tags_all                           = {
+          + "app"        = "lsm-rust"
+          + "managed-by" = "terraform"
+        }
+    }
+
+Plan: 7 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + push_role_arn  = (known after apply)
+  + repository_url = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Saved the plan to:
+<scratch>/tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "<scratch>/tfplan"
